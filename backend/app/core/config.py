@@ -12,7 +12,9 @@ class Settings(BaseSettings):
     es_index: str = "books"
 
     # Embedding Model
-    embedding_model_name: str = "BAAI/bge-m3"
+    embedding_model_name: str = "Qwen/Qwen3-Embedding-0.6B"
+    embedding_dimension: int = 1024     # MRL 지원: 256, 512, 1024 중 선택
+    embedding_device: str = "cpu"       # "cpu" 또는 "cuda"
 
     # Aladin API
     aladin_api_key: str = ""
