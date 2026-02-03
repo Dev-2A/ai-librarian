@@ -1,5 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.core.config import get_settings
+
+settings = get_settings()
 
 app = FastAPI(
     title="AI Librarian",
@@ -23,4 +26,8 @@ async def root():
 
 @app.get("/health")
 async def health_check():
-    return {"status": "healthy"}
+    return {
+        "status": "healthy",
+        "es_host": settings.es_host,
+        "embedding_model": settings.embedding_model_name,
+    }
