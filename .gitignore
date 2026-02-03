@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# Environment
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node (프론트엔드)
+node_modules/
+.next/
+out/
+
+# Elasticsearch data
+esdata/
+
+# Model cache
+models/
+.cache/
+
+# Logs
+*.log
