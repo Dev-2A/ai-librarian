@@ -6,6 +6,7 @@ from app.services.embedding import get_embedding_service
 from app.services.elasticsearch import get_es_service
 from app.api.routes.books import router as books_router
 from app.api.routes.recommendations import router as recommendations_router
+from app.api.routes.aladin import router as aladin_router
 
 settings = get_settings()
 
@@ -22,6 +23,11 @@ async def lifespan(app: FastAPI):
         await es.create_index_if_not_exists()
     else:
         print("⚠️ Elasticsearch not available — start ES before indexing books")
+    
+    if settings.aladin_api_key:
+        print("✅ Aladin API key configured")
+    else:
+        print("⚠️ Aladin API key not set — book search disabled")
     
     print("🚀 AI Librarian is ready!")
     yield
@@ -50,6 +56,7 @@ app.add_middleware(
 # ── 라우터 등록 ──
 app.include_router(books_router, prefix="/api")
 app.include_router(recommendations_router, prefix="/api")
+app.include_router(aladin_router, prefix="/api")
 
 
 @app.get("/")
@@ -69,4 +76,5 @@ async def health_check():
         "embedding_model": settings.embedding_model_name,
         "embedding_dimension": settings.embedding_dimension,
         "device": settings.embedding_device,
+        "aladin_api": "configured" if settings.aladin_api_key else "not configured",
     }

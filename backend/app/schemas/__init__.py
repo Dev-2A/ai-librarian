@@ -5,6 +5,7 @@ from .book import (
     RecommendationResponse,
 )
 from .recommendation import RecommendByReviewRequest, RecommendByBookRequest
+from .aladin import AladinBookItem, AladinSearchResponse
 
 __all__ = [
     "BookCreateRequest",
@@ -13,4 +14,6 @@ __all__ = [
     "RecommendationResponse",
     "RecommendByReviewRequest",
     "RecommendByBookRequest",
+    "AladinBookItem",
+    "AladinSearchResponse",
 ]
