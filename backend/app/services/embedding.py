@@ -7,16 +7,16 @@ from app.core.config import get_settings
 settings = get_settings()
 
 
-def _last_token_pool(last_hidden_states: Tensor, attention_mask: Tensor) -> Tensor:
+def _last_token_pool(last_hidden_state: Tensor, attention_mask: Tensor) -> Tensor:
     """Qwen3-Embedding은 마지막 토큰 풀링을 사용합니다."""
     left_padding = attention_mask[:, -1].sum() == attention_mask.shape[0]
     if left_padding:
-        return last_hidden_states[:, -1]
+        return last_hidden_state[:, -1]
     else:
         sequence_lengths = attention_mask.sum(dim=1) - 1
-        batch_size = last_hidden_states.shape[0]
-        return last_hidden_states[
-            torch.arange(batch_size, device=last_hidden_states.device),
+        batch_size = last_hidden_state.shape[0]
+        return last_hidden_state[
+            torch.arange(batch_size, device=last_hidden_state.device),
             sequence_lengths,
         ]
 
@@ -86,7 +86,7 @@ class EmbeddingService:
             outputs = self.model(**batch_dict)
         
         embeddings = _last_token_pool(
-            outputs.last_hidden_states, batch_dict["attention_mask"]
+            outputs.last_hidden_state, batch_dict["attention_mask"]
         )
         
         # MRL: 지정된 차원으로 잘라내기
