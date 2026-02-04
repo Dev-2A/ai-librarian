@@ -5,6 +5,7 @@ from app.core.config import get_settings
 from app.services.embedding import get_embedding_service
 from app.services.elasticsearch import get_es_service
 from app.api.routes.books import router as books_router
+from app.api.routes.recommendations import router as recommendations_router
 
 settings = get_settings()
 
@@ -48,6 +49,7 @@ app.add_middleware(
 
 # ── 라우터 등록 ──
 app.include_router(books_router, prefix="/api")
+app.include_router(recommendations_router, prefix="/api")
 
 
 @app.get("/")
