@@ -1,0 +1,23 @@
+# ES만 실행: docker compose -f docker-compose.dev.yml up -d
+services:
+  elasticsearch:
+    image: elasticsearch:8.15.0
+    container_name: ai-librarian-es
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+    volumes:
+      - esdata:/var/lib/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  esdata:
+    driver: local

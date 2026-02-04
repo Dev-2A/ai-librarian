@@ -1,17 +1,16 @@
 version: "3.8"
 
 services:
+  # ── Elasticsearch ──
   elasticsearch:
     image: elasticsearch:8.15.0
     container_name: ai-librarian-es
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
-      - xpack.security.http.ssl.enabled=false
       - ES_JAVA_OPTS=-Xms512m -Xmx512m
     ports:
       - "9200:9200"
-      - "9300:9300"
     volumes:
       - esdata:/var/lib/elasticsearch/data
     healthcheck:
@@ -20,7 +19,40 @@ services:
       timeout: 5s
       retries: 5
     restart: unless-stopped
+  
+  # ── 백엔드 (FastAPI) ──
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ai-librarian-backend
+    env_file:
+      - ./backend/.env
+    environment:
+      - ES_HOST=http://elasticsearch:9200
+    ports:
+      - "8000:8000"
+    volumes:
+      - model-cache:/app/.cache/huggingface
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    restart: unless-stopped
+  
+  # ── 프론트엔드 (Nginx) ──
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ai-librarian-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
 
 volumes:
   esdata:
+    driver: local
+  model-cache:
     driver: local
