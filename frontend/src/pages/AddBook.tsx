@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Send, Plus } from "lucide-react";
 import toast from "react-hot-toast";
 import { bookApi } from "../api";
@@ -18,9 +18,31 @@ const initialForm: BookCreateRequest = {
 
 export default function AddBook() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [form, setForm] = useState<BookCreateRequest>(initialForm);
   const [tagInput, setTagInput] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  // 검색 페이지에서 넘어온 도서 정보 자동 채우기
+  useEffect(() => {
+    const state = location.state as {
+      title?: string;
+      author?: string;
+      isbn?: string;
+    } | null;
+
+    if (state) {
+      setForm((prev) => ({
+        ...prev,
+        title: state.title || prev.title,
+        author: state.author || prev.author,
+        isbn: state.isbn || prev.isbn,
+      }));
+      // state 소비 후 히스토리에서 제거 (뒤로 갔다 돌아왔을 때 중복 방지)
+      window.history.replaceState({}, document.title);
+      toast.success("도서 정보가 자동으로 입력되었습니다!");
+    }
+  }, [location.state]);
 
   const updateField = <K extends keyof BookCreateRequest>(
     key: K,

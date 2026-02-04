@@ -26,6 +26,6 @@ class AladinSearchResponse(BaseModel):
     total_results: int = Field(default=0, alias="totalResults")
     start_index: int = Field(default=0, alias="startIndex")
     items_per_page: int = Field(default=0, alias="itemsPerPage")
-    items: list[AladinBookItem] = Field(default=[], alias="item")
+    items: list[AladinBookItem] = Field(default=[], alias="item", serialization_alias="items")
     
     model_config = {"populate_by_name": True}
